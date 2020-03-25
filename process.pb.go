@@ -7,6 +7,7 @@ import (
 	context "context"
 	fmt "fmt"
 	proto "github.com/golang/protobuf/proto"
+	_ "google.golang.org/genproto/googleapis/api/annotations"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -25,15 +26,13 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
 type Process struct {
-	Name                 string           `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	Version              string           `protobuf:"bytes,2,opt,name=version,proto3" json:"version,omitempty"`
-	Status               Status           `protobuf:"varint,3,opt,name=status,proto3,enum=schema.Status" json:"status,omitempty"`
-	Input                *Process_Payload `protobuf:"bytes,4,opt,name=input,proto3" json:"input,omitempty"`
-	Output               *Process_Payload `protobuf:"bytes,5,opt,name=output,proto3" json:"output,omitempty"`
-	Error                *Event           `protobuf:"bytes,6,opt,name=error,proto3" json:"error,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}         `json:"-"`
-	XXX_unrecognized     []byte           `json:"-"`
-	XXX_sizecache        int32            `json:"-"`
+	Name                 string              `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Version              string              `protobuf:"bytes,2,opt,name=version,proto3" json:"version,omitempty"`
+	Status               Status              `protobuf:"varint,3,opt,name=status,proto3,enum=schema.Status" json:"status,omitempty"`
+	Definition           *Process_Definition `protobuf:"bytes,10,opt,name=definition,proto3" json:"definition,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}            `json:"-"`
+	XXX_unrecognized     []byte              `json:"-"`
+	XXX_sizecache        int32               `json:"-"`
 }
 
 func (m *Process) Reset()         { *m = Process{} }
@@ -82,28 +81,69 @@ func (m *Process) GetStatus() Status {
 	return Status_UNACTIVATED
 }
 
-func (m *Process) GetInput() *Process_Payload {
+func (m *Process) GetDefinition() *Process_Definition {
+	if m != nil {
+		return m.Definition
+	}
+	return nil
+}
+
+type Process_Definition struct {
+	Input                *Process_Data `protobuf:"bytes,1,opt,name=input,proto3" json:"input,omitempty"`
+	Output               *Process_Data `protobuf:"bytes,2,opt,name=output,proto3" json:"output,omitempty"`
+	Error                *Process_Data `protobuf:"bytes,3,opt,name=error,proto3" json:"error,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}      `json:"-"`
+	XXX_unrecognized     []byte        `json:"-"`
+	XXX_sizecache        int32         `json:"-"`
+}
+
+func (m *Process_Definition) Reset()         { *m = Process_Definition{} }
+func (m *Process_Definition) String() string { return proto.CompactTextString(m) }
+func (*Process_Definition) ProtoMessage()    {}
+func (*Process_Definition) Descriptor() ([]byte, []int) {
+	return fileDescriptor_54c4d0e8c0aaf5c3, []int{0, 0}
+}
+
+func (m *Process_Definition) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Process_Definition.Unmarshal(m, b)
+}
+func (m *Process_Definition) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Process_Definition.Marshal(b, m, deterministic)
+}
+func (m *Process_Definition) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Process_Definition.Merge(m, src)
+}
+func (m *Process_Definition) XXX_Size() int {
+	return xxx_messageInfo_Process_Definition.Size(m)
+}
+func (m *Process_Definition) XXX_DiscardUnknown() {
+	xxx_messageInfo_Process_Definition.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Process_Definition proto.InternalMessageInfo
+
+func (m *Process_Definition) GetInput() *Process_Data {
 	if m != nil {
 		return m.Input
 	}
 	return nil
 }
 
-func (m *Process) GetOutput() *Process_Payload {
+func (m *Process_Definition) GetOutput() *Process_Data {
 	if m != nil {
 		return m.Output
 	}
 	return nil
 }
 
-func (m *Process) GetError() *Event {
+func (m *Process_Definition) GetError() *Process_Data {
 	if m != nil {
 		return m.Error
 	}
 	return nil
 }
 
-type Process_Payload struct {
+type Process_Data struct {
 	Event                *Event   `protobuf:"bytes,1,opt,name=event,proto3" json:"event,omitempty"`
 	Entity               *Entity  `protobuf:"bytes,2,opt,name=entity,proto3" json:"entity,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
@@ -111,39 +151,39 @@ type Process_Payload struct {
 	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *Process_Payload) Reset()         { *m = Process_Payload{} }
-func (m *Process_Payload) String() string { return proto.CompactTextString(m) }
-func (*Process_Payload) ProtoMessage()    {}
-func (*Process_Payload) Descriptor() ([]byte, []int) {
-	return fileDescriptor_54c4d0e8c0aaf5c3, []int{0, 0}
+func (m *Process_Data) Reset()         { *m = Process_Data{} }
+func (m *Process_Data) String() string { return proto.CompactTextString(m) }
+func (*Process_Data) ProtoMessage()    {}
+func (*Process_Data) Descriptor() ([]byte, []int) {
+	return fileDescriptor_54c4d0e8c0aaf5c3, []int{0, 1}
 }
 
-func (m *Process_Payload) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_Process_Payload.Unmarshal(m, b)
+func (m *Process_Data) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Process_Data.Unmarshal(m, b)
 }
-func (m *Process_Payload) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_Process_Payload.Marshal(b, m, deterministic)
+func (m *Process_Data) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Process_Data.Marshal(b, m, deterministic)
 }
-func (m *Process_Payload) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Process_Payload.Merge(m, src)
+func (m *Process_Data) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Process_Data.Merge(m, src)
 }
-func (m *Process_Payload) XXX_Size() int {
-	return xxx_messageInfo_Process_Payload.Size(m)
+func (m *Process_Data) XXX_Size() int {
+	return xxx_messageInfo_Process_Data.Size(m)
 }
-func (m *Process_Payload) XXX_DiscardUnknown() {
-	xxx_messageInfo_Process_Payload.DiscardUnknown(m)
+func (m *Process_Data) XXX_DiscardUnknown() {
+	xxx_messageInfo_Process_Data.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_Process_Payload proto.InternalMessageInfo
+var xxx_messageInfo_Process_Data proto.InternalMessageInfo
 
-func (m *Process_Payload) GetEvent() *Event {
+func (m *Process_Data) GetEvent() *Event {
 	if m != nil {
 		return m.Event
 	}
 	return nil
 }
 
-func (m *Process_Payload) GetEntity() *Entity {
+func (m *Process_Data) GetEntity() *Entity {
 	if m != nil {
 		return m.Entity
 	}
@@ -152,7 +192,8 @@ func (m *Process_Payload) GetEntity() *Entity {
 
 func init() {
 	proto.RegisterType((*Process)(nil), "schema.Process")
-	proto.RegisterType((*Process_Payload)(nil), "schema.Process.Payload")
+	proto.RegisterType((*Process_Definition)(nil), "schema.Process.Definition")
+	proto.RegisterType((*Process_Data)(nil), "schema.Process.Data")
 }
 
 func init() {
@@ -160,28 +201,39 @@ func init() {
 }
 
 var fileDescriptor_54c4d0e8c0aaf5c3 = []byte{
-	// 333 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x92, 0xdd, 0x6a, 0xe3, 0x30,
-	0x10, 0x85, 0x51, 0x7e, 0x1c, 0x76, 0xf2, 0x07, 0xda, 0x8b, 0x35, 0xbe, 0x0a, 0xbb, 0x6c, 0x1b,
-	0x02, 0x75, 0x4b, 0xfa, 0x04, 0x4d, 0x1b, 0x4a, 0xa1, 0x50, 0xe3, 0xd2, 0xde, 0xab, 0xce, 0x40,
-	0x04, 0xb5, 0x64, 0xa4, 0x71, 0x20, 0xef, 0xd6, 0x17, 0xea, 0x5b, 0x14, 0x4b, 0x32, 0x85, 0x10,
-	0x4a, 0xae, 0xa4, 0x39, 0xe7, 0x93, 0x46, 0x47, 0x0c, 0x8c, 0x2b, 0xa3, 0x0b, 0xb4, 0x36, 0xad,
-	0x8c, 0x26, 0xcd, 0x23, 0x5b, 0x6c, 0xb1, 0x14, 0xc9, 0xa8, 0xd0, 0x65, 0xa9, 0x95, 0x57, 0x93,
-	0x21, 0xee, 0x50, 0x51, 0x28, 0x46, 0xa8, 0x48, 0xd2, 0xde, 0x57, 0x7f, 0x3f, 0x3a, 0x30, 0xc8,
-	0xfc, 0x15, 0x9c, 0x43, 0x4f, 0x89, 0x12, 0x63, 0x36, 0x63, 0xf3, 0x5f, 0xb9, 0xdb, 0xf3, 0x18,
-	0x06, 0x3b, 0x34, 0x56, 0x6a, 0x15, 0x77, 0x9c, 0xdc, 0x96, 0xfc, 0x0c, 0x22, 0x4b, 0x82, 0x6a,
-	0x1b, 0x77, 0x67, 0x6c, 0x3e, 0x59, 0x4e, 0x52, 0xdf, 0x3b, 0x7d, 0x76, 0x6a, 0x1e, 0x5c, 0x7e,
-	0x01, 0x7d, 0xa9, 0xaa, 0x9a, 0xe2, 0xde, 0x8c, 0xcd, 0x87, 0xcb, 0x3f, 0x2d, 0x16, 0xba, 0xa6,
-	0x99, 0xd8, 0xbf, 0x6b, 0xb1, 0xc9, 0x3d, 0xc5, 0x2f, 0x21, 0xd2, 0x35, 0x35, 0x7c, 0xff, 0x67,
-	0x3e, 0x60, 0xfc, 0x1f, 0xf4, 0xd1, 0x18, 0x6d, 0xe2, 0xc8, 0xf1, 0xe3, 0x96, 0x5f, 0x37, 0x99,
-	0x73, 0xef, 0x25, 0xaf, 0x30, 0x08, 0xe7, 0x1c, 0xdf, 0x58, 0x2e, 0xe6, 0x11, 0xbe, 0x59, 0x9a,
-	0x70, 0xfe, 0x9b, 0x5c, 0xea, 0xe1, 0x77, 0xb8, 0xb5, 0x53, 0xf3, 0xe0, 0x2e, 0x3f, 0x19, 0x40,
-	0x78, 0xd8, 0x4d, 0xf6, 0xc0, 0x17, 0xd0, 0x7b, 0x94, 0x96, 0xf8, 0xb4, 0xc5, 0x9f, 0x2a, 0x92,
-	0x5a, 0xd9, 0x64, 0x7a, 0x90, 0xe2, 0x8a, 0xf1, 0x73, 0xe8, 0xde, 0xe3, 0x09, 0x28, 0x5f, 0x40,
-	0x74, 0x6b, 0x50, 0x10, 0xf2, 0x43, 0xeb, 0x28, 0xfb, 0x52, 0x6d, 0x4e, 0x63, 0x53, 0x80, 0x3b,
-	0x14, 0x05, 0xc9, 0xdd, 0x49, 0xfc, 0xea, 0x3f, 0xfc, 0x2e, 0x74, 0x99, 0x56, 0x5b, 0x69, 0x6b,
-	0x49, 0x18, 0xec, 0xd5, 0x28, 0xf8, 0x59, 0x33, 0x4f, 0x19, 0x7b, 0x8b, 0xdc, 0x60, 0x5d, 0x7f,
-	0x05, 0x00, 0x00, 0xff, 0xff, 0x9a, 0x70, 0x8d, 0xde, 0x9a, 0x02, 0x00, 0x00,
+	// 506 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x94, 0xdf, 0x6a, 0x13, 0x41,
+	0x14, 0xc6, 0x99, 0x24, 0xdd, 0xea, 0x49, 0x9b, 0xc0, 0xe8, 0x45, 0x5c, 0x8a, 0x84, 0xf8, 0x87,
+	0x10, 0xeb, 0x4e, 0xd8, 0xaa, 0x17, 0xbd, 0x6b, 0xb5, 0x88, 0x20, 0xba, 0x6c, 0x11, 0x6f, 0xbc,
+	0x99, 0x6e, 0x4e, 0xdb, 0x01, 0x77, 0x66, 0xd9, 0x99, 0x0d, 0x48, 0xe9, 0x8d, 0xe0, 0x0b, 0xd4,
+	0xf7, 0xf1, 0x25, 0x7c, 0x05, 0x1f, 0x44, 0x66, 0x76, 0xb6, 0x6a, 0x93, 0x48, 0xee, 0xf6, 0x9c,
+	0xf3, 0xcd, 0xf7, 0x3b, 0x73, 0xf6, 0x30, 0xb0, 0x5d, 0x94, 0x2a, 0x43, 0xad, 0xa3, 0xa2, 0x54,
+	0x46, 0xd1, 0x40, 0x67, 0xe7, 0x98, 0xf3, 0x70, 0xe7, 0x4c, 0xa9, 0xb3, 0xcf, 0xc8, 0x78, 0x21,
+	0x18, 0x97, 0x52, 0x19, 0x6e, 0x84, 0x92, 0x5e, 0x15, 0x6e, 0x65, 0x2a, 0xcf, 0x95, 0xf4, 0x51,
+	0x17, 0xe7, 0x28, 0x4d, 0x53, 0x42, 0x69, 0x84, 0xf9, 0x52, 0x47, 0xa3, 0x6f, 0x6d, 0xd8, 0x4c,
+	0x6a, 0x00, 0xa5, 0xd0, 0x91, 0x3c, 0xc7, 0x01, 0x19, 0x92, 0xf1, 0xed, 0xd4, 0x7d, 0xd3, 0x01,
+	0x6c, 0xce, 0xb1, 0xd4, 0x42, 0xc9, 0x41, 0xcb, 0xa5, 0x9b, 0x90, 0x3e, 0x86, 0x40, 0x1b, 0x6e,
+	0x2a, 0x3d, 0x68, 0x0f, 0xc9, 0xb8, 0x17, 0xf7, 0xa2, 0xba, 0xb3, 0xe8, 0xd8, 0x65, 0x53, 0x5f,
+	0xa5, 0xfb, 0x00, 0x33, 0x3c, 0x15, 0x52, 0xd8, 0xfe, 0x06, 0x30, 0x24, 0xe3, 0x6e, 0x1c, 0x36,
+	0x5a, 0x8f, 0x8e, 0x5e, 0x5d, 0x2b, 0xd2, 0xbf, 0xd4, 0xe1, 0x15, 0x01, 0xf8, 0x53, 0xa2, 0x13,
+	0xd8, 0x10, 0xb2, 0xa8, 0x8c, 0xeb, 0xb0, 0x1b, 0xdf, 0x5d, 0x70, 0xe1, 0x86, 0xa7, 0xb5, 0x84,
+	0xee, 0x42, 0xa0, 0x2a, 0x63, 0xc5, 0xad, 0xff, 0x88, 0xbd, 0xc6, 0x3a, 0x63, 0x59, 0xaa, 0xd2,
+	0xdd, 0x65, 0xa5, 0xb3, 0x93, 0x84, 0xc7, 0xd0, 0xb1, 0x21, 0x7d, 0x00, 0x1b, 0x6e, 0xae, 0xbe,
+	0x9b, 0xed, 0xe6, 0xcc, 0x91, 0x4d, 0xa6, 0x75, 0xcd, 0x4e, 0xa9, 0x9e, 0xb7, 0x6f, 0xe3, 0x7a,
+	0x4a, 0x47, 0x2e, 0x9b, 0xfa, 0x6a, 0xfc, 0x83, 0x40, 0xcf, 0xc3, 0x52, 0xe4, 0xb3, 0x83, 0xe4,
+	0x0d, 0x7d, 0x07, 0x9d, 0xb7, 0x42, 0x1b, 0xda, 0x6f, 0x8e, 0xbc, 0x2f, 0xdc, 0x2f, 0x0e, 0xfb,
+	0x37, 0xba, 0x1b, 0x8d, 0xbe, 0xfe, 0xfc, 0xf5, 0xbd, 0xb5, 0x43, 0x43, 0x56, 0x17, 0x98, 0x5f,
+	0x19, 0x36, 0x9f, 0x32, 0x21, 0x75, 0x81, 0x99, 0x99, 0x12, 0xfa, 0x09, 0xda, 0xaf, 0x71, 0x1d,
+	0xbb, 0x3d, 0x67, 0xf7, 0x94, 0x3e, 0x59, 0x6d, 0xc7, 0x2e, 0xec, 0x76, 0x5c, 0xb2, 0x0b, 0xbf,
+	0x0d, 0x97, 0xf1, 0x55, 0x1b, 0xfa, 0xde, 0xe0, 0x63, 0x29, 0x0c, 0xda, 0x1b, 0x24, 0x10, 0xbc,
+	0x2c, 0x91, 0x1b, 0xa4, 0x37, 0x19, 0x8b, 0xd0, 0x87, 0x0e, 0x7a, 0x7f, 0x74, 0x6f, 0x09, 0x34,
+	0x73, 0x26, 0xfb, 0x64, 0x42, 0x39, 0x04, 0x1f, 0x8a, 0xd9, 0x7a, 0x8e, 0xcf, 0x9d, 0x23, 0x0b,
+	0x27, 0x4b, 0x1c, 0x2b, 0x67, 0xb2, 0x70, 0x0b, 0x8b, 0x38, 0x81, 0x5b, 0x07, 0x99, 0x11, 0xf3,
+	0x7f, 0x20, 0x2b, 0x67, 0xf5, 0xcc, 0x41, 0xa2, 0x78, 0x77, 0x09, 0x84, 0x7b, 0x9b, 0x05, 0x0c,
+	0x3d, 0xb5, 0x6b, 0xcd, 0xd7, 0xa7, 0xbc, 0x70, 0x94, 0x69, 0x1c, 0x2d, 0xa1, 0xcc, 0x70, 0x25,
+	0xe7, 0xf0, 0x11, 0xdc, 0xc9, 0x54, 0x1e, 0x15, 0xe7, 0x42, 0x57, 0xc2, 0xa0, 0xb7, 0x3d, 0xdc,
+	0xf2, 0xbe, 0x89, 0x7d, 0x02, 0x12, 0x72, 0x12, 0xb8, 0xb7, 0x60, 0xef, 0x77, 0x00, 0x00, 0x00,
+	0xff, 0xff, 0xb3, 0xd0, 0x35, 0x05, 0x6b, 0x04, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -192,31 +244,28 @@ var _ grpc.ClientConnInterface
 // is compatible with the grpc package it is being compiled against.
 const _ = grpc.SupportPackageIsVersion6
 
-// ProcessAPIClient is the client API for ProcessAPI service.
+// ProcessReadAPIClient is the client API for ProcessReadAPI service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
-type ProcessAPIClient interface {
-	List(ctx context.Context, in *Options, opts ...grpc.CallOption) (ProcessAPI_ListClient, error)
+type ProcessReadAPIClient interface {
+	List(ctx context.Context, in *Options, opts ...grpc.CallOption) (ProcessReadAPI_ListClient, error)
 	Get(ctx context.Context, in *Options, opts ...grpc.CallOption) (*Process, error)
-	Create(ctx context.Context, in *Process, opts ...grpc.CallOption) (*Process, error)
-	Update(ctx context.Context, in *Process, opts ...grpc.CallOption) (*Process, error)
-	Deactivate(ctx context.Context, in *Process, opts ...grpc.CallOption) (*Process, error)
 }
 
-type processAPIClient struct {
+type processReadAPIClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewProcessAPIClient(cc grpc.ClientConnInterface) ProcessAPIClient {
-	return &processAPIClient{cc}
+func NewProcessReadAPIClient(cc grpc.ClientConnInterface) ProcessReadAPIClient {
+	return &processReadAPIClient{cc}
 }
 
-func (c *processAPIClient) List(ctx context.Context, in *Options, opts ...grpc.CallOption) (ProcessAPI_ListClient, error) {
-	stream, err := c.cc.NewStream(ctx, &_ProcessAPI_serviceDesc.Streams[0], "/schema.ProcessAPI/List", opts...)
+func (c *processReadAPIClient) List(ctx context.Context, in *Options, opts ...grpc.CallOption) (ProcessReadAPI_ListClient, error) {
+	stream, err := c.cc.NewStream(ctx, &_ProcessReadAPI_serviceDesc.Streams[0], "/schema.ProcessReadAPI/List", opts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &processAPIListClient{stream}
+	x := &processReadAPIListClient{stream}
 	if err := x.ClientStream.SendMsg(in); err != nil {
 		return nil, err
 	}
@@ -226,16 +275,16 @@ func (c *processAPIClient) List(ctx context.Context, in *Options, opts ...grpc.C
 	return x, nil
 }
 
-type ProcessAPI_ListClient interface {
+type ProcessReadAPI_ListClient interface {
 	Recv() (*Process, error)
 	grpc.ClientStream
 }
 
-type processAPIListClient struct {
+type processReadAPIListClient struct {
 	grpc.ClientStream
 }
 
-func (x *processAPIListClient) Recv() (*Process, error) {
+func (x *processReadAPIListClient) Recv() (*Process, error) {
 	m := new(Process)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
@@ -243,195 +292,270 @@ func (x *processAPIListClient) Recv() (*Process, error) {
 	return m, nil
 }
 
-func (c *processAPIClient) Get(ctx context.Context, in *Options, opts ...grpc.CallOption) (*Process, error) {
+func (c *processReadAPIClient) Get(ctx context.Context, in *Options, opts ...grpc.CallOption) (*Process, error) {
 	out := new(Process)
-	err := c.cc.Invoke(ctx, "/schema.ProcessAPI/Get", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/schema.ProcessReadAPI/Get", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *processAPIClient) Create(ctx context.Context, in *Process, opts ...grpc.CallOption) (*Process, error) {
-	out := new(Process)
-	err := c.cc.Invoke(ctx, "/schema.ProcessAPI/Create", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *processAPIClient) Update(ctx context.Context, in *Process, opts ...grpc.CallOption) (*Process, error) {
-	out := new(Process)
-	err := c.cc.Invoke(ctx, "/schema.ProcessAPI/Update", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *processAPIClient) Deactivate(ctx context.Context, in *Process, opts ...grpc.CallOption) (*Process, error) {
-	out := new(Process)
-	err := c.cc.Invoke(ctx, "/schema.ProcessAPI/Deactivate", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-// ProcessAPIServer is the server API for ProcessAPI service.
-type ProcessAPIServer interface {
-	List(*Options, ProcessAPI_ListServer) error
+// ProcessReadAPIServer is the server API for ProcessReadAPI service.
+type ProcessReadAPIServer interface {
+	List(*Options, ProcessReadAPI_ListServer) error
 	Get(context.Context, *Options) (*Process, error)
-	Create(context.Context, *Process) (*Process, error)
-	Update(context.Context, *Process) (*Process, error)
-	Deactivate(context.Context, *Process) (*Process, error)
 }
 
-// UnimplementedProcessAPIServer can be embedded to have forward compatible implementations.
-type UnimplementedProcessAPIServer struct {
+// UnimplementedProcessReadAPIServer can be embedded to have forward compatible implementations.
+type UnimplementedProcessReadAPIServer struct {
 }
 
-func (*UnimplementedProcessAPIServer) List(req *Options, srv ProcessAPI_ListServer) error {
+func (*UnimplementedProcessReadAPIServer) List(req *Options, srv ProcessReadAPI_ListServer) error {
 	return status.Errorf(codes.Unimplemented, "method List not implemented")
 }
-func (*UnimplementedProcessAPIServer) Get(ctx context.Context, req *Options) (*Process, error) {
+func (*UnimplementedProcessReadAPIServer) Get(ctx context.Context, req *Options) (*Process, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Get not implemented")
 }
-func (*UnimplementedProcessAPIServer) Create(ctx context.Context, req *Process) (*Process, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
-}
-func (*UnimplementedProcessAPIServer) Update(ctx context.Context, req *Process) (*Process, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
-}
-func (*UnimplementedProcessAPIServer) Deactivate(ctx context.Context, req *Process) (*Process, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Deactivate not implemented")
+
+func RegisterProcessReadAPIServer(s *grpc.Server, srv ProcessReadAPIServer) {
+	s.RegisterService(&_ProcessReadAPI_serviceDesc, srv)
 }
 
-func RegisterProcessAPIServer(s *grpc.Server, srv ProcessAPIServer) {
-	s.RegisterService(&_ProcessAPI_serviceDesc, srv)
-}
-
-func _ProcessAPI_List_Handler(srv interface{}, stream grpc.ServerStream) error {
+func _ProcessReadAPI_List_Handler(srv interface{}, stream grpc.ServerStream) error {
 	m := new(Options)
 	if err := stream.RecvMsg(m); err != nil {
 		return err
 	}
-	return srv.(ProcessAPIServer).List(m, &processAPIListServer{stream})
+	return srv.(ProcessReadAPIServer).List(m, &processReadAPIListServer{stream})
 }
 
-type ProcessAPI_ListServer interface {
+type ProcessReadAPI_ListServer interface {
 	Send(*Process) error
 	grpc.ServerStream
 }
 
-type processAPIListServer struct {
+type processReadAPIListServer struct {
 	grpc.ServerStream
 }
 
-func (x *processAPIListServer) Send(m *Process) error {
+func (x *processReadAPIListServer) Send(m *Process) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-func _ProcessAPI_Get_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ProcessReadAPI_Get_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(Options)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ProcessAPIServer).Get(ctx, in)
+		return srv.(ProcessReadAPIServer).Get(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/schema.ProcessAPI/Get",
+		FullMethod: "/schema.ProcessReadAPI/Get",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProcessAPIServer).Get(ctx, req.(*Options))
+		return srv.(ProcessReadAPIServer).Get(ctx, req.(*Options))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ProcessAPI_Create_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Process)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ProcessAPIServer).Create(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/schema.ProcessAPI/Create",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProcessAPIServer).Create(ctx, req.(*Process))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _ProcessAPI_Update_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Process)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ProcessAPIServer).Update(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/schema.ProcessAPI/Update",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProcessAPIServer).Update(ctx, req.(*Process))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _ProcessAPI_Deactivate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Process)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ProcessAPIServer).Deactivate(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/schema.ProcessAPI/Deactivate",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProcessAPIServer).Deactivate(ctx, req.(*Process))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-var _ProcessAPI_serviceDesc = grpc.ServiceDesc{
-	ServiceName: "schema.ProcessAPI",
-	HandlerType: (*ProcessAPIServer)(nil),
+var _ProcessReadAPI_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "schema.ProcessReadAPI",
+	HandlerType: (*ProcessReadAPIServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "Get",
-			Handler:    _ProcessAPI_Get_Handler,
-		},
-		{
-			MethodName: "Create",
-			Handler:    _ProcessAPI_Create_Handler,
-		},
-		{
-			MethodName: "Update",
-			Handler:    _ProcessAPI_Update_Handler,
-		},
-		{
-			MethodName: "Deactivate",
-			Handler:    _ProcessAPI_Deactivate_Handler,
+			Handler:    _ProcessReadAPI_Get_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{
 		{
 			StreamName:    "List",
-			Handler:       _ProcessAPI_List_Handler,
+			Handler:       _ProcessReadAPI_List_Handler,
 			ServerStreams: true,
 		},
 	},
+	Metadata: "process.proto",
+}
+
+// ProcessWriteAPIClient is the client API for ProcessWriteAPI service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
+type ProcessWriteAPIClient interface {
+	Create(ctx context.Context, in *Process, opts ...grpc.CallOption) (*Process, error)
+	Update(ctx context.Context, in *Process, opts ...grpc.CallOption) (*Process, error)
+	Activate(ctx context.Context, in *Options, opts ...grpc.CallOption) (*Process, error)
+	Deactivate(ctx context.Context, in *Options, opts ...grpc.CallOption) (*Process, error)
+}
+
+type processWriteAPIClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewProcessWriteAPIClient(cc grpc.ClientConnInterface) ProcessWriteAPIClient {
+	return &processWriteAPIClient{cc}
+}
+
+func (c *processWriteAPIClient) Create(ctx context.Context, in *Process, opts ...grpc.CallOption) (*Process, error) {
+	out := new(Process)
+	err := c.cc.Invoke(ctx, "/schema.ProcessWriteAPI/Create", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *processWriteAPIClient) Update(ctx context.Context, in *Process, opts ...grpc.CallOption) (*Process, error) {
+	out := new(Process)
+	err := c.cc.Invoke(ctx, "/schema.ProcessWriteAPI/Update", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *processWriteAPIClient) Activate(ctx context.Context, in *Options, opts ...grpc.CallOption) (*Process, error) {
+	out := new(Process)
+	err := c.cc.Invoke(ctx, "/schema.ProcessWriteAPI/Activate", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *processWriteAPIClient) Deactivate(ctx context.Context, in *Options, opts ...grpc.CallOption) (*Process, error) {
+	out := new(Process)
+	err := c.cc.Invoke(ctx, "/schema.ProcessWriteAPI/Deactivate", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// ProcessWriteAPIServer is the server API for ProcessWriteAPI service.
+type ProcessWriteAPIServer interface {
+	Create(context.Context, *Process) (*Process, error)
+	Update(context.Context, *Process) (*Process, error)
+	Activate(context.Context, *Options) (*Process, error)
+	Deactivate(context.Context, *Options) (*Process, error)
+}
+
+// UnimplementedProcessWriteAPIServer can be embedded to have forward compatible implementations.
+type UnimplementedProcessWriteAPIServer struct {
+}
+
+func (*UnimplementedProcessWriteAPIServer) Create(ctx context.Context, req *Process) (*Process, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
+}
+func (*UnimplementedProcessWriteAPIServer) Update(ctx context.Context, req *Process) (*Process, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
+}
+func (*UnimplementedProcessWriteAPIServer) Activate(ctx context.Context, req *Options) (*Process, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Activate not implemented")
+}
+func (*UnimplementedProcessWriteAPIServer) Deactivate(ctx context.Context, req *Options) (*Process, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Deactivate not implemented")
+}
+
+func RegisterProcessWriteAPIServer(s *grpc.Server, srv ProcessWriteAPIServer) {
+	s.RegisterService(&_ProcessWriteAPI_serviceDesc, srv)
+}
+
+func _ProcessWriteAPI_Create_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Process)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProcessWriteAPIServer).Create(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/schema.ProcessWriteAPI/Create",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProcessWriteAPIServer).Create(ctx, req.(*Process))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ProcessWriteAPI_Update_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Process)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProcessWriteAPIServer).Update(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/schema.ProcessWriteAPI/Update",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProcessWriteAPIServer).Update(ctx, req.(*Process))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ProcessWriteAPI_Activate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Options)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProcessWriteAPIServer).Activate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/schema.ProcessWriteAPI/Activate",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProcessWriteAPIServer).Activate(ctx, req.(*Options))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ProcessWriteAPI_Deactivate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Options)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProcessWriteAPIServer).Deactivate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/schema.ProcessWriteAPI/Deactivate",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProcessWriteAPIServer).Deactivate(ctx, req.(*Options))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+var _ProcessWriteAPI_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "schema.ProcessWriteAPI",
+	HandlerType: (*ProcessWriteAPIServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "Create",
+			Handler:    _ProcessWriteAPI_Create_Handler,
+		},
+		{
+			MethodName: "Update",
+			Handler:    _ProcessWriteAPI_Update_Handler,
+		},
+		{
+			MethodName: "Activate",
+			Handler:    _ProcessWriteAPI_Activate_Handler,
+		},
+		{
+			MethodName: "Deactivate",
+			Handler:    _ProcessWriteAPI_Deactivate_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
 	Metadata: "process.proto",
 }
